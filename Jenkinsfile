@@ -25,7 +25,7 @@ pipeline {
                 scripts {
 
                      // Defines the deployment path for Windows
-                def DEPLOY_PATH_TARGET = 'C:\\jenkins_target' // Uses backslashes for Windows path
+                def deployPath = 'C:\\jenkins_target'  // Uses backslashes for Windows path
                 
                 echo "Starting Windows deployment to destination: ${DEPLOY_PATH_TARGET}"
 
@@ -33,12 +33,12 @@ pipeline {
                 
                 // 1. Create directory using the Windows 'bat' step
                 // The '|| exit 0' ensures the pipeline doesn't stop if the directory already exists.
-                bat "mkdir %DEPLOY_PATH_TARGET% || exit 0"
+                bat "mkdir ${deployPath} || exit 0"
                 
                 // 2. Copy files using xcopy (Windows equivalent of cp -r)
                 // . is the current directory (Jenkins workspace)
                 // /s /e /y ensure copying subdirectories, empty directories, and overwriting existing files.
-                bat "xcopy /s /e /y . %DEPLOY_PATH_TARGET%" 
+                bat "xcopy /s /e /y . ${deployPath}"
 
                 echo "Deployment complete. Website files are now in ${DEPLOY_PATH_TARGET}"
                 }
