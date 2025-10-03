@@ -20,11 +20,13 @@ pipeline {
 
         // CD: Deploys the files to the web server directory
         stage('Deployment') {
-            // Defines the deployment path for Windows
-                def DEPLOY_PATH_TARGET = 'C:\\jenkins_target' // Uses backslashes for Windows path
+           
             steps {
-                
+                scripts {
 
+                     // Defines the deployment path for Windows
+                def DEPLOY_PATH_TARGET = 'C:\\jenkins_target' // Uses backslashes for Windows path
+                
                 echo "Starting Windows deployment to destination: ${DEPLOY_PATH_TARGET}"
 
                 // --- Deployment Commands ---
@@ -39,6 +41,7 @@ pipeline {
                 bat "xcopy /s /e /y . %DEPLOY_PATH_TARGET%" 
 
                 echo "Deployment complete. Website files are now in ${DEPLOY_PATH_TARGET}"
+                }
             }
         }
     }
