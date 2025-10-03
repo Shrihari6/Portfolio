@@ -1,17 +1,15 @@
-// Jenkinsfile
+// Jenkinsfile (Windows Deployment Pipeline - FINAL FIX)
 
 pipeline {
     agent any 
 
     stages {
-        // CI: Checks out the code from the Git repository
         stage('Checkout Source Code') {
             steps {
-                echo 'Checking out the latest code from GitHub.'
+                echo 'Code checked out successfully from GitHub.'
             }
         }
 
-        // CI: Placeholder for checks
         stage('Test/Linter') {
             steps {
                 echo 'Skipping formal tests, but this is where you run linting/checks.'
@@ -20,27 +18,23 @@ pipeline {
 
         // CD: Deploys the files to the web server directory
         stage('Deployment') {
-           
             steps {
-                scripts {
+                // *** FIX 1: The 'script' block must be singular ***
+                script {
+                    
+                    // Defines the deployment path for Windows
+                    def deployPath = 'C:\\jenkins_target' 
+                    
+                    // *** FIX 2: Use the correctly defined variable (deployPath) in the echo statement ***
+                    echo "Starting Windows deployment to destination: ${deployPath}"
 
-                     // Defines the deployment path for Windows
-                def deployPath = 'C:\\jenkins_target'  // Uses backslashes for Windows path
-                
-                echo "Starting Windows deployment to destination: ${DEPLOY_PATH_TARGET}"
+                    // 1. Create directory using the Windows 'bat' step
+                    bat "mkdir ${deployPath} || exit 0"
+                    
+                    // 2. Copy files using xcopy
+                    bat "xcopy /s /e /y . ${deployPath}" 
 
-                // --- Deployment Commands ---
-                
-                // 1. Create directory using the Windows 'bat' step
-                // The '|| exit 0' ensures the pipeline doesn't stop if the directory already exists.
-                bat "mkdir ${deployPath} || exit 0"
-                
-                // 2. Copy files using xcopy (Windows equivalent of cp -r)
-                // . is the current directory (Jenkins workspace)
-                // /s /e /y ensure copying subdirectories, empty directories, and overwriting existing files.
-                bat "xcopy /s /e /y . ${deployPath}"
-
-                echo "Deployment complete. Website files are now in ${DEPLOY_PATH_TARGET}"
+                    echo "Deployment complete. Website files are now in ${deployPath}"
                 }
             }
         }
